@@ -2,6 +2,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>vhs</artifactId>
+
   <build>
     <plugins>
       <plugin>
@@ -10,6 +11,7 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -21,6 +23,7 @@
       <groupId>org.projectlombok</groupId>
       <optional>true</optional>
     </dependency>
+
     <dependency>
       <artifactId>spring-boot-starter-test</artifactId>
       <exclusions>
@@ -32,7 +35,26 @@
       <groupId>org.springframework.boot</groupId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <artifactId>spring-data-jpa</artifactId>
+      <groupId>org.springframework.data</groupId>
+      <version>2.2.4.RELEASE</version>
+    </dependency>
+
+    <dependency>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <version>2.2.4.RELEASE</version>
+    </dependency>
+
+    <dependency>
+      <artifactId>mysql-connector-java</artifactId>
+      <groupId>mysql</groupId>
+      <version>8.0.19</version>
+    </dependency>
   </dependencies>
+
   <description>Demo project</description>
   <groupId>com.example</groupId>
   <modelVersion>4.0.0</modelVersion>
@@ -42,7 +64,7 @@
     <artifactId>spring-boot-starter-parent</artifactId>
     <groupId>org.springframework.boot</groupId>
     <relativePath/>
-    <version>2.2.4.RELEASE</version> <!-- lookup parent from repository -->
+    <version>2.2.4.RELEASE</version>
   </parent>
 
   <properties>
@@ -50,5 +72,4 @@
   </properties>
 
   <version>0.0.1-SNAPSHOT</version>
-
 </project>
