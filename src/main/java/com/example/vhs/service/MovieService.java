@@ -2,6 +2,7 @@ package com.example.vhs.service;
 
 import com.example.vhs.dao.MovieRepository;
 import com.example.vhs.entity.MovieEntity;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class MovieService {
         return repository.findById(id);
     }
 
-    public Iterable<MovieEntity> findAll() {
+    public List<MovieEntity> findAll() {
         return repository.findAll();
     }
 
