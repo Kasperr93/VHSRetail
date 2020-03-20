@@ -15,18 +15,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/api/v1")
+@RestController
+@RequestMapping(path = "/api/v1")
 public class MovieController {
 
     private MovieService service;
-    private MovieMapper movieMapper;
 
-    public MovieController(MovieService service, MovieMapper movieMapper) {
+    public MovieController(MovieService service) {
         this.service = service;
-        this.movieMapper = movieMapper;
     }
 
     @GetMapping("/movies/{id}")
@@ -34,7 +34,7 @@ public class MovieController {
         Optional<MovieEntity> findById = service.findById(id);
 
         if (findById.isPresent()) {
-            return ResponseEntity.ok(movieMapper.movieEntityToMovieDto(findById.get()));
+            return ResponseEntity.ok(MovieMapper.INSTANCE.movieEntityToMovieDto(findById.get()));
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -45,7 +45,7 @@ public class MovieController {
         List<MovieEntity> findAllMoviesEntity = service.findAll();
 
         if (findAllMoviesEntity.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
         }
 
         return new ResponseEntity<>(convertAllMovies(findAllMoviesEntity), HttpStatus.OK);
@@ -53,7 +53,7 @@ public class MovieController {
 
     @PostMapping("/movies")
     public ResponseEntity<MovieEntity> save(@RequestBody MovieData movieData) {
-        MovieEntity entity = movieMapper.movieDtoToMovieEntity(movieData);
+        MovieEntity entity = MovieMapper.INSTANCE.movieDtoToMovieEntity(movieData);
 
         if (entity == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -67,7 +67,7 @@ public class MovieController {
 
     private List<MovieData> convertAllMovies(List<MovieEntity> findAllMoviesEntity) {
         return findAllMoviesEntity.stream()
-                .map(movie -> movieMapper.movieEntityToMovieDto(movie))
+                .map(MovieMapper.INSTANCE::movieEntityToMovieDto)
                 .collect(Collectors.toList());
     }
 }
