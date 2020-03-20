@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,14 +30,12 @@ public class MovieController {
     }
 
     @GetMapping("/movies/{id}")
-    public ResponseEntity<MovieData> findById(@RequestParam("id") Long id) {
+    public ResponseEntity<MovieData> findById(@PathVariable("id") Long id) {
         Optional<MovieEntity> findById = service.findById(id);
 
-        if (findById.isPresent()) {
-            return ResponseEntity.ok(MovieMapper.INSTANCE.movieEntityToMovieDto(findById.get()));
-        }
+        return findById.map(movieEntity -> new ResponseEntity<>(MovieMapper.INSTANCE.movieEntityToMovieDto(movieEntity),
+                HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/movies")
@@ -45,7 +43,7 @@ public class MovieController {
         List<MovieEntity> findAllMoviesEntity = service.findAll();
 
         if (findAllMoviesEntity.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(convertAllMovies(findAllMoviesEntity), HttpStatus.OK);
