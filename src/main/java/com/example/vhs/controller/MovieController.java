@@ -1,7 +1,6 @@
 package com.example.vhs.controller;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import com.example.vhs.converter.MovieMapper;
 import com.example.vhs.dto.MovieData;
@@ -10,6 +9,7 @@ import com.example.vhs.service.MovieService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,25 +20,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api/v1")
+@RequestMapping(path = "/api/v1/movies")
 public class MovieController {
 
-    private MovieService service;
+    private final MovieService service;
 
-    public MovieController(MovieService service) {
+    public MovieController(final MovieService service) {
         this.service = service;
     }
 
-    @GetMapping("/movies/{id}")
-    public ResponseEntity<MovieData> findById(@PathVariable("id") Long id) {
+    @GetMapping("{id}")
+    public ResponseEntity<MovieData> findById(@PathVariable("id") final Long id) {
         Optional<MovieEntity> findById = service.findById(id);
 
         return findById.map(movieEntity -> new ResponseEntity<>(MovieMapper.INSTANCE.movieEntityToMovieDto(movieEntity),
                 HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
     }
 
-    @GetMapping("/movies")
+    @GetMapping
     public ResponseEntity<List<MovieData>> findAll() {
         List<MovieEntity> findAllMoviesEntity = service.findAll();
 
@@ -49,23 +48,28 @@ public class MovieController {
         return new ResponseEntity<>(convertAllMovies(findAllMoviesEntity), HttpStatus.OK);
     }
 
-    @PostMapping("/movies")
-    public ResponseEntity<MovieEntity> save(@RequestBody MovieData movieData) {
-        MovieEntity entity = MovieMapper.INSTANCE.movieDtoToMovieEntity(movieData);
+    @PostMapping
+    public ResponseEntity<MovieData> save(@RequestBody final MovieData movieData) {
 
-        if (entity == null) {
+        if (movieData == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        //TODO linkto - czy działa + id nie powinno sie dac z palca
-        linkTo(methodOn(MovieController.class).save(movieData));
+        MovieEntity entity = MovieMapper.INSTANCE.movieDtoToMovieEntity(movieData);
+        MovieEntity movieEntitySaved = service.save(entity);
+        MovieData movieDataSaved = MovieMapper.INSTANCE.movieEntityToMovieDto(movieEntitySaved);
+        movieDataSaved.add(createRelLink(movieEntitySaved));
 
-        return new ResponseEntity<>(service.save(entity), HttpStatus.CREATED);
+        return new ResponseEntity<>(movieDataSaved, HttpStatus.CREATED);
     }
 
-    private List<MovieData> convertAllMovies(List<MovieEntity> findAllMoviesEntity) {
+    private List<MovieData> convertAllMovies(final List<MovieEntity> findAllMoviesEntity) {
         return findAllMoviesEntity.stream()
                 .map(MovieMapper.INSTANCE::movieEntityToMovieDto)
                 .collect(Collectors.toList());
+    }
+
+    private Link createRelLink(MovieEntity movieEntity) {
+        return linkTo(MovieController.class).slash(movieEntity.getId()).withSelfRel();
     }
 }

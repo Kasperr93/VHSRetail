@@ -22,7 +22,7 @@ public class MovieEntity {
     @Enumerated(EnumType.STRING)
     private MovieGenre movieGenre;
     private LocalDate releaseDate;
-    private int stockAmount;
-    private double rentPrice;
-    private boolean isExclusive;
+    private Integer stockAmount;
+    private Double rentPrice;
+    private Boolean isExclusive;
 }

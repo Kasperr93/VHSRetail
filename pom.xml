@@ -17,6 +17,11 @@
               <groupId>org.mapstruct</groupId>
               <version>${mapstruct.version}</version>
             </path>
+            <path>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+              <version>${lombok.version}</version>
+            </path>
           </annotationProcessorPaths>
           <source>11</source>
           <target>11</target>
@@ -26,15 +31,17 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <artifactId>spring-boot-starter-web</artifactId>
       <groupId>org.springframework.boot</groupId>
     </dependency>
     <dependency>
-      <artifactId>lombok</artifactId>
       <groupId>org.projectlombok</groupId>
-      <optional>true</optional>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+      <version>${lombok.version}</version>
     </dependency>
     <dependency>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -73,6 +80,7 @@
       <version>${spring.hateoas.version}</version>
     </dependency>
   </dependencies>
+
   <description>VHS Retail demo project</description>
   <groupId>com.example</groupId>
   <artifactId>vhs</artifactId>
@@ -95,6 +103,7 @@
     <spring.boot.starter.version>2.2.4.RELEASE</spring.boot.starter.version>
     <spring.data.jpa.version>2.2.4.RELEASE</spring.data.jpa.version>
     <spring.hateoas.version>1.0.3.RELEASE</spring.hateoas.version>
+    <lombok.version>1.18.12</lombok.version>
   </properties>
 
   <version>0.0.1-SNAPSHOT</version>
